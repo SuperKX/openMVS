@@ -1,31 +1,84 @@
+## 【Ubuntu18下环境配置】
+1、使用anoconda创建虚拟环境：
+```
+conda create -n MVS_env
+source activate conda
+```
+2、安装库
+```
+sudo apt-get update -qq && sudo apt-get install -qq
+sudo apt-get -y install git cmake libpng-dev libjpeg-dev libtiff-dev libglu1-mesa-dev
+```
 
-OpenMVS 注释版
+3、Eigen
+```
+git clone https://gitlab.com/libeigen/eigen.git --branch 3.2
+mkdir eigen_build && cd eigen_build
+cmake . ../eigen
+make && sudo make install
+cd ..
+```
+*如果git下载过慢，去网址中直接下载拷贝。
 
-建议：
+4、安装Boost
+```
+sudo apt-get -y install libboost-iostreams-dev libboost-program-options-dev
+libboost-system-dev libboost-serialization-dev
+```
 
-1、在Ubuntu16.04版本下安装，依赖库在这个版本下更适合。其他版本自己可以尝试。
+5、安装OpenCV
+```
+sudo apt-get -y install libopencv-dev
+```
 
-2、第三步main_path='pwd' 这个其实是设置的是vcglib所在的路径，可以在VCGLib安装之后再指定， 例如我的vcg在/home/code/mvs下，main_path='/home/code/mvs'
+6、安装CGAL 
+```
+sudo apt-get -y install libcgal-dev libcgal-qt5-dev
+```
 
-3、boost 安装过程中如果有问题可以尝试不同版本，比如升级到1.6.3 。
+7、安装VCGLib 
+```
+git clone https://github.com/cdcseacave/VCG.git vcglib
+```
+*当前vcglib版本不符，会报错，可使用之前的tag1.0.1版本
 
-4、install时候如果opencv报一些未定义错误，需要自己换更高级别的版本，比如opencv3或4从源码安装。
+8、安装OpenMVS
+```
+git clone https://github.com/electech6/openMVS_comments.git openMVS
+mkdir openMVS_build && cd openMVS_build
+```
 
-附：
+9、生成库文件
+```
+sudo make -j2 && sudo make install
+```
 
-**课程目录**：
+## 【测试数据】
+数据下载：https://github.com/cdcseacave/openMVS_sample
 
-<img src="https://github.com/ReeseL/pictures_lib/raw/main/03.png" alt="c1_22" style="zoom:200%;" />
+0、安装meshlab
+```
+sudo apt-get install meshlab
+```
 
-**课程入口**：
+1、稠密重建
+```
+/bin/DensifyPointCloud -w /地址/openMVS_sample -i scene.mvs -o test_dense.mvs
+```
 
-链接：https://appafc4omci9700.h5.xiaoeknow.com
+2、曲面重建
+```
+./bin/ReconstructMesh -w /地址/data -i test_dense.mvs -o test_mesh.mvs
+```
 
-扫码加入：
-
-![in](https://github.com/ReeseL/pictures_lib/raw/main/04.jpg)
-
----
+3、网格优化
+```
+./bin/RefineMesh -w /地址/data -i test_mesh.mvs -o test_refinemesh.mvs
+```
+4、纹理贴图
+```
+./bin/TextureMesh -w /地址/data -i test_refinemesh.mvs -o test_texture.mvs
+```
 
 # OpenMVS: open Multi-View Stereo reconstruction library
 
